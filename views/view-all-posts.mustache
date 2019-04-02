@@ -1,0 +1,43 @@
+<html>
+<head>
+ <link rel="stylesheet" href="css/stylesheet.css"></link>
+</head>
+
+<body>
+
+<h1>All Blog Posts</h1>
+
+<ul>
+{{#posts}}
+
+<li>
+  <div>
+  Title: {{posttitle}}
+  </div>
+  <div>
+  Date: {{postdate}}
+  </div>
+  <p>
+  Post: {{post}}
+  </p>
+  <form action="/delete-post" method="POST">
+  <input type="hidden" name="postId" value="{{postid}}" />
+  <button type="submit">Delete</button>
+ 
+  <br>
+  </form>
+  <form action="/update-post" method="POST">
+  <textarea name="post"></textarea>
+  <input type="hidden" name="postId" value="{{postid}}" />
+  <button type="submit">Update</button>
+  <hr>
+  <br>
+  </form>
+</li>
+
+{{/posts}}
+</ul>
+
+</body>
+
+</html>
