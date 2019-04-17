@@ -36,7 +36,7 @@ app.get('/add-post',(req,res) => {
    })
 
 
-   app.post('/add-post',(req,res) => {
+app.post('/add-post',(req,res) => {
     let title = req.body.title
     let post = req.body.post
 
@@ -45,6 +45,48 @@ app.get('/add-post',(req,res) => {
         res.redirect('/home')
     })
 })
+
+
+app.post('/view-comment',(req,res) => {
+    let posts = []
+    let postId = parseInt(req.body.postId)
+    db.any("select p.*, c.comment from posts p, comments c where p.postid = c.post_id order by p.timestamp desc;")
+        .then((data) => {
+    data.forEach((item) => {
+        //if the post does not exist then ad it to the new_posts array
+        if(posts.length == 0 ) {
+            let post = new Post(item.posttitle,item.post,item.postid,item.timestamp)
+            let comment = new Comment(item.comment,item.post_id)
+            post.comments.push(comment)
+            posts.push(post)
+        // Else if the post exist in the new_posts array so add the comment to it.
+        } else {
+            let persistedPost = posts.find((post) => {
+                return post.postid == item.postid
+            })
+            if(persistedPost) {
+                let comment = new Comment(item.comment,item.post_id)
+                persistedPost.comments.push(comment)
+        // Or else the post didn't exist so add it along with it's comment to the new_posts array
+        } else {
+                let post = new Post(item.posttitle,item.post,item.postid)
+                let comment = new Comment(item.comment,item.post_id)
+                post.comments.push(comment)
+                posts.push(post)
+                }
+            }
+        })
+        console.log(posts)
+        res.render('home',{posts:posts})
+    })
+})
+
+
+
+
+
+
+
 
 
 

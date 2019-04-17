@@ -18,9 +18,17 @@
   <p>Title: {{posttitle}}</p>
   <p>Date: {{timestamp}}</p>
   <p>Post: {{post}}</p>
+  {{#comments}}
   <p>Comments:{{comment}}</p>
+  {{/comments}}
   </div>
   
+ <form action="/view-comment" method="POST">
+  <input type="hidden" name="postId" value="{{postid}}" />
+  <button type="submit">View Comment</button>
+  <br>
+  </form>
+
   <form action="/delete-post" method="POST">
   <input type="hidden" name="postId" value="{{postid}}" />
   <button type="submit">Delete</button>
