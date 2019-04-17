@@ -35,7 +35,8 @@ app.get('/add-post',(req,res) => {
     res.render('add-post')
    })
 
-app.post('/add-post',(req,res) => {
+
+   app.post('/add-post',(req,res) => {
     let title = req.body.title
     let post = req.body.post
 
@@ -47,7 +48,7 @@ app.post('/add-post',(req,res) => {
 
 
 
-
+//home
 app.get('/home',(req,res) => {
     // My where clause mimmiks primary and foreign key relationship
     //db.any('select p.* c.* from posts p, comments c;')
@@ -59,6 +60,8 @@ app.get('/home',(req,res) => {
 })
 
 
+
+// Delete Post
 app.post('/delete-post',(req,res) => {
     let postId = parseInt(req.body.postId)
     db.none('DELETE FROM posts WHERE postid = $1',[postId])
@@ -67,6 +70,8 @@ app.post('/delete-post',(req,res) => {
     }).catch(error => console.log(error))
 })
 
+
+// Add Comment
 app.post('/add-comment',(req,res) => {
     let comments = req.body.comments
     let postid = req.body.postId
@@ -76,7 +81,7 @@ app.post('/add-comment',(req,res) => {
     }).catch(error => console.log(error))
    })
 
-
+// Update Post
    app.post('/update-post',(req,res) => {
     let post = req.body.post
     let postId = parseInt(req.body.postId)
