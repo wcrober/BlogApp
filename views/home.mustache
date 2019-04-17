@@ -18,8 +18,9 @@
   <p>Title: {{posttitle}}</p>
   <p>Date: {{timestamp}}</p>
   <p>Post: {{post}}</p>
+  <p>Comments: {{comments.length}}</p>
   {{#comments}}
-  <p>Comments:{{comment}}</p>
+  <p>{{comment}}</p>
   {{/comments}}
   </div>
   
@@ -53,6 +54,7 @@
 </li>
 
 {{/posts}}
+
 </ul>
 
 </body>
