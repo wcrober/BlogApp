@@ -1,3 +1,4 @@
+ 
 <html>
 <head>
  <link rel="stylesheet" href="css/stylesheet.css"></link>
@@ -6,32 +7,40 @@
 <body>
 
 <h1>All Blog Posts</h1>
-
+{{post.length}}
 <ul>
+
 {{#posts}}
 
 <li>
-  <div>
-  Title: {{posttitle}}
+  <div class="post_content"></p>
+  <p>Post ID: {{postid}}</p>
+  <p>Title: {{posttitle}}</p>
+  <p>Date: {{timestamp}}</p>
+  <p>Post: {{post}}</p>
+  <p>Comments:{{comment}}</p>
   </div>
-  <div>
-  Date: {{postdate}}
-  </div>
-  <p>
-  Post: {{post}}
-  </p>
+  
   <form action="/delete-post" method="POST">
   <input type="hidden" name="postId" value="{{postid}}" />
   <button type="submit">Delete</button>
- 
   <br>
   </form>
+  
+  <form action="/add-comment" method="POST">
+  <textarea name="comments"></textarea>
+  <input type="hidden" name="postId" value="{{postid}}"/>
+  <button type="submit">Comment</button>
+  <br>
+  </form>
+
+
   <form action="/update-post" method="POST">
   <textarea name="post"></textarea>
   <input type="hidden" name="postId" value="{{postid}}" />
   <button type="submit">Update</button>
-  <hr>
   <br>
+  <hr>
   </form>
 </li>
 
@@ -41,3 +50,4 @@
 </body>
 
 </html>
+

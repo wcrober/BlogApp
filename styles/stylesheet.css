@@ -4,6 +4,7 @@ h1 {
 
 body {
    background-color: #ededed;
+   background-image: url("./background-image");
 }
 
 ul {

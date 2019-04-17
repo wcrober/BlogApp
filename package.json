@@ -9,8 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "express-session": "^1.16.1",
     "mustache": "^3.0.1",
     "mustache-express": "^1.2.8",
     "pg-promise": "^8.6.4"
