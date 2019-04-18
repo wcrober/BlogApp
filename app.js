@@ -17,6 +17,8 @@ const db = pgp(connect)
 // Will add 10 salt rounds to the hash to make it harder to reverse engineer. The larger the number the longer it takes to create the hash.
 const saltRounds = 10
 const VIEWS_PATH = path.join(__dirname, '/views')
+// Used to keep track of a user session. A cookie
+const session = require('express-session')
 
 // This tells bodyParser what kinds of bodies it will be parsing. extended false means cant pass hyerckey formated data
 app.use(bodyParser.urlencoded({extended: false}))
@@ -24,13 +26,18 @@ app.engine('mustache',mustachExpress(VIEWS_PATH + '/partials'))
 app.use('/css',express.static('styles'))
 app.set('view engine', 'mustache')
 
+// Register the middleware
+app.use(session({
+    // secret this is the salt that we gonna pass in. Make it any random characters if you like or some non dictionary word
+    secret: 'klasjdfas',
+    // The values in our session are changing
+    resave: false,
+    // Means should I create a session if user put nothing in it
+    saveUninitialized: false
+}))
 
-//let session = require('express-session')
-//app.use(session({
-//    secret: 'Twas brillig, Raven quotes',
-//    resave: false,
- //   saveUninitialized: true
-//}))
+
+
 
 
 // Routes are end-points or sometimes called actions
@@ -74,24 +81,36 @@ app.post('/register', (req, res) => {
 
 
 //LOGIN
-app.get('login', (req, res) => {
+app.get('/login', (req, res) => {
     res.render('login')
 })
 
 
-app.get('/login', (req,res) => {
+app.post('/login', (req,res) => {
     let username = req.body.username
-    let persistedUser = users.find((user) => {
-        return user.username == username
-    })
-    bcrypt.compare(req.body.password, persistedUser.hash, (err,res) => {
-        if(res) {
-            if(req.session){
-                req.session.username = username
-                response.redirect('/home')
-            }
-        } else {
-            res.render('login',{message:'Invalid Login'})
+    let password = req.body.password
+
+    db.oneOrNone('select userid,username,password from users where username = $1',[username])
+    // the select should return a user if one already exist. This also measn if user is null then perform what is in the function which is currently empty
+    .then((user) => { 
+        if(user){ // check for the user password compare the password passed in with user.password which is the result of user from the db.oneOrNone select statement and the last arg is a function which returns an error or result
+            bcrypt.compare(password,user.password,function(error,result){
+                //if the result is true then do the following
+                if(result){
+
+                    //put username and userId in the session. Anything can go here but this is how you can refer to the user on different screens and pages
+                    if(req.session){
+                        // Created a user attribute which holds an object which consist of userID and username
+                        req.session.user = {userID: user.userid, username: user.username}
+                    }
+                       
+                    res.redirect("/add-post")
+                } else{// if the password does not match
+                    res.render('login', {message: "Invalid Login"})
+                }
+            })
+        } else {// if the user does not exist
+            res.render('login', {message: "Invalid Login"})
         }
     })
 })
@@ -100,7 +119,7 @@ app.get('/login', (req,res) => {
 
 // ADD POST
 app.get('/add-post',(req,res) => {
-    res.render('add-post')
+    res.render('add-post',{username:req.session.user.username})
    })
 
 
@@ -157,6 +176,7 @@ app.get('/home',(req,res) => {
     //db.any('select p.* c.* from posts p, comments c;')
     db.any('select p.*, c.comment from posts p, comments c where p.postid = c.post_id order by p.timestamp desc')
     .then((posts)=> {
+        // Render the home page and pass in the {posts:posts} object
         res.render('home', {posts:posts})
         console.log(posts)
     })
