@@ -1,9 +1,11 @@
 <html>
 <head>
+{{> header}}
 <link rel="stylesheet" href="css/stylesheet.css"></link>
 </head>
 
 <body>
+{{> menu}}
 <h1>Start a blog Post</h1>
   <div id="postwindow">
   <form action='/add-post' method="POST">
@@ -19,6 +21,8 @@
   </form>
   </div>
 
+
+{{> footer}}
 </body>
 
 </html>

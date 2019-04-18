@@ -7,24 +7,30 @@ const pgp = require('pg-promise')()
 const app = express()
 // Package for hashing passwords
 const bcrypt = require('bcrypt')
+// path is used below fo the VIEWS PATH to find views folder
 const path = require('path')
 const Post = require('./post')
 const Comment = require('./comments')
-// pgp requires this to post to the db
+// pgp requires this to connect to the db
 const connect = "postgres://localhost:5432/practice"
 // Create an instance of the connection string for pgp to use
 const db = pgp(connect)
 // Will add 10 salt rounds to the hash to make it harder to reverse engineer. The larger the number the longer it takes to create the hash.
 const saltRounds = 10
+// This is telling mustache express where it can find the views folder. join current project directory and joining it with the views folders
 const VIEWS_PATH = path.join(__dirname, '/views')
 // Used to keep track of a user session. A cookie
 const session = require('express-session')
 
 // This tells bodyParser what kinds of bodies it will be parsing. extended false means cant pass hyerckey formated data
 app.use(bodyParser.urlencoded({extended: false}))
-app.engine('mustache',mustachExpress(VIEWS_PATH + '/partials'))
-app.use('/css',express.static('styles'))
+// Configure view engine
+app.engine('mustache',mustachExpress(VIEWS_PATH + '/partials', '.mustache'))
+app.set('views',VIEWS_PATH)
 app.set('view engine', 'mustache')
+
+
+app.use('/css',express.static('styles'))
 
 // Register the middleware
 app.use(session({
